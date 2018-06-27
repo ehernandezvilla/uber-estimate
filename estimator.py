@@ -28,6 +28,13 @@ response = client.get_price_estimates(
   seat_count=2
 )
 
+count = 0
+while (count < 10):
+    count = count + 1
+    estimate = response.json.get('prices')
+    df = pd.DataFrame(estimate)
+    df.to_csv('out.csv') #EXPORT TO CSV
+
 estimate = response.json.get('prices')
 
 #BUILD DATAFRAME
