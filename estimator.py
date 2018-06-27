@@ -7,7 +7,7 @@ import pandas as pd
 from uber_rides.session import Session
 from uber_rides.client import UberRidesClient
 
-session = Session(server_token='TOKEN')
+session = Session(server_token='3kUZl4fhPn5KM9yvW7g0feFQ_M_W9uRBvkRzqpJw')
 client = UberRidesClient(session)
 
 #GET A LIST OF AVAILABLE PRODUCTS
