@@ -4,7 +4,7 @@
 
 import numpy as np
 import pandas as pd
-from uber_rides session import Session
+from uber_rides.session import Session
 from uber_rides.client import UberRidesClient
 
 session = Session(server_token='TOKEN')
