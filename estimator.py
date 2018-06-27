@@ -23,7 +23,7 @@ product = response.json.get('products')
 response = client.get_price_estimates(
   start_latitude=37.770,
   start_longitude=-122.411,
-  end_laltitude=37.791,
+  end_latitude=37.791,
   end_longitude=-122.405,
   seat_count=2
 )
