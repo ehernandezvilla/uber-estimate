@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 from uber_rides.session import Session
 from uber_rides.client import UberRidesClient
+from statistics import mean
 
-session = Session(server_token='3kUZl4fhPn5KM9yvW7g0feFQ_M_W9uRBvkRzqpJw')
+session = Session(server_token='#')
 client = UberRidesClient(session)
 
 #GET A LIST OF AVAILABLE PRODUCTS
@@ -15,16 +16,16 @@ client = UberRidesClient(session)
 response = client.get_products(37.77, -122.41)
 products = response.json.get('products')
 
-#GET PRICE AND TIMES ESTIMATES
+#GET PRICE AND TIMES ESTIMATES -> No arroja diferencias a nivel de output
 
-response = client.get_products(37.77, -122.41)
-product = response.json.get('products')
+#response = client.get_products(37.77, -122.41) 
+#product = response.json.get('products')
 
 response = client.get_price_estimates(
-  start_latitude=37.770,
-  start_longitude=-122.411,
-  end_latitude=37.791,
-  end_longitude=-122.405,
+  start_latitude=-33.4046804,
+  start_longitude=-70.6014554,
+  end_latitude=-33.4369985,
+  end_longitude=-70.628771,
   seat_count=2
 )
 
@@ -33,16 +34,15 @@ while (count < 10):
     count = count + 1
     estimate = response.json.get('prices')
     df = pd.DataFrame(estimate)
-    df.to_csv('out.csv') #EXPORT TO CSV
+    range = print(df.loc[0][4]) #Range estimate
+    low = print(df.loc[0][7]) #Low estimate
+    hight = print(df.loc[0][5]) #Hight estimate
+    #avg = print(mean(['low','hight']))
+    
+        
 
-estimate = response.json.get('prices')
-
-#BUILD DATAFRAME
-
-df = pd.DataFrame(estimate)
 
 #EXPORT TO CSV
 
-df.to_csv('out.csv')
-
+#df.to_csv('out.csv')
 
