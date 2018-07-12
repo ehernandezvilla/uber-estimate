@@ -30,10 +30,10 @@ ela = -33.4046849
 elo = -70.59926669999999
 
 for i in range(3000):
-  session = Session(server_token='3kUZl4fhPn5KM9yvW7g0feFQ_M_W9uRBvkRzqpJw')
+  session = Session(server_token='TOKEN')
   client = UberRidesClient(session)
   #Establishing the connection to a Mysql DB
-  cnx = mysql.connector.connect(user='mcready',database='uber_estimate',password='donip123',host='localhost')
+  cnx = mysql.connector.connect(user='your_user',database='your_db',password='your_pass',host='localhost')
   cursor = cnx.cursor()
   response = client.get_price_estimates(
   start_latitude= sla,
