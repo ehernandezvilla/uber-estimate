@@ -1,11 +1,10 @@
-#References 
+
+# References 
 
 #https://www.coordenadas-gps.com/
-#https://developer.uber.com/docs/riders/ride-requests/tutorials/api/python 
+#https://developer.uber.com/docs/riders/ride-requests/tutorials/api/python
 
-
-#Import
-
+import mysql.connector
 import numpy as np
 import pandas as pd
 from uber_rides.session import Session
@@ -20,51 +19,74 @@ import os
 import datetime
 import time
 
+# Addresses
 
-#Direcciones 
+# Parque Antonio Rabat 6443, Vitacura 
+sla = -33.371552
+slo = -70.57803209999997
 
-#San Jorge 60 
-sla = -33.4547474
-slo = -70.57783369999999
-
-#Joaquin Montero 3000 
+# Joaquin Montero 3000
 ela = -33.4046849
 elo = -70.59926669999999
 
+for i in range(3000):
+  session = Session(server_token='3kUZl4fhPn5KM9yvW7g0feFQ_M_W9uRBvkRzqpJw')
+  client = UberRidesClient(session)
+  #Establishing the connection to a Mysql DB
+  cnx = mysql.connector.connect(user='mcready',database='uber_estimate',password='donip123',host='localhost')
+  cursor = cnx.cursor()
+  response = client.get_price_estimates(
+  start_latitude= sla,
+  start_longitude= slo,
+  end_latitude= ela,
+  end_longitude= elo,
+  seat_count=2
+  )
+  estimate = response.json.get('prices')
+  # Converting the Json call to a numpy dataframe
+  df = pd.DataFrame.from_dict(json_normalize(estimate), orient='columns')
+  ts = time.time() #Timestamp definition
+  st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S') #Timestamp definition
+  # Name of the category
+  name = df.loc[0][1] 
+  # Distance of the route in KM
+  distance = df.loc[0][2]
+  # Duration in seg 
+  duration = df.loc[0][3]
+  dur = (duration/60)
+  # Low estimate with float conversion throught a.item() is possible to use np.asscalar(a) as well
+  low = np.float64(df.loc[0][7]).item() 
+  # Hight estimate with float conversion throught a.item() is possible to use np.asscalar(a) as well
+  hight = np.float64(df.loc[0][5]).item() 
+  # Range estimate
+  range = df.loc[0][4] 
+  # (%) Variation between the lowest and the highest value
+  porcen = ((hight-low)/low)
+  # Mean between the lowest and the highest value
+  a = np.array(low)
+  b = np.array(hight)
+  avg = np.mean([a,b])
+  # Surge price
+  surge = np.float64(df.loc[0][10]).item()
+  # Printing the values selected in the dataframe
+  pp = print(name,"|","Dist.=",distance,"|","Durat.=",dur,"|","Low=",low,"|","Hight=",hight,"|",
+  "Range=",range,"|","%=",porcen,"|","AVG=",avg,"|","Surge=",surge,"|",st, end='\n')
+  # List storage for the values
+  list = [name, low, hight, range, porcen,avg,st]
+  # Define the estructure of the table/data
+  add_values = ("INSERT INTO uber_request "
+  "(display_name, duration, distance, estimate, low_estimate, hight_estimate, average, surge) "
+  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+  data_values = (name, dur, distance, range, low, hight, avg, surge)
+  #writer.writerow(list) -> close the loop with the data for a csv file
+  # Insert new value
+  cursor.execute(add_values, data_values)
+  # Making data committed to the database & close the connection after the loop
+  cnx.commit()
+  cursor.close()
+  cnx.close()
+  # Delay definition
+  sleep(0.5)   
 
-with open('large.csv','w') as f1:
-    writer=csv.writer(f1, delimiter=',',lineterminator='\n',)
-    for i in range(5):
-        session = Session(server_token='3kUZl4fhPn5KM9yvW7g0feFQ_M_W9uRBvkRzqpJw')
-        client = UberRidesClient(session)
-        response = client.get_price_estimates(
-          start_latitude= sla,
-          start_longitude= slo,
-          end_latitude= ela,
-          end_longitude= elo,
-          seat_count=2
-          )
-        estimate = response.json.get('prices')
-        df = pd.DataFrame.from_dict(json_normalize(estimate), orient='columns')
-        ts = time.time()
-        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        name = df.loc[0][1] #Name
-        low = df.loc[0][7] #Low estimate
-        #print(type(low))
-        hight = df.loc[0][5] #Hight estimate
-        #print(type(hight))
-        range = df.loc[0][4] #Range estimate
-        porcen = ((hight-low)/low)
-        a = np.array(low, hight)
-        avg = np.mean(a)
-        pp = print(name,"|", "Low=",low, "|", "Hight=",hight, "|", "Range=",range,"|","%=",porcen,"|", "AVG=",avg,"|",st, end='\n')
-        list = [name, low, hight, range, porcen,avg,st]
-        writer.writerow(list)
-        sleep(5)   
-
-print("loop end .....")
+print("Loop end .....")
 # os.system('cls') -> Clear with system tools
-
-
-#EXPORT TO CSV
-#df.to_csv('out.csv') -> Just Numpy Dataframes not iterable
