@@ -6,6 +6,7 @@ from uber_rides.client import UberRidesClient
 from time import sleep
 import datetime
 import time
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE, UBER_API_TOKEN
 
 def get_uber_estimate(sla, slo, ela, elo):
     session = Session(server_token='TOKEN')
