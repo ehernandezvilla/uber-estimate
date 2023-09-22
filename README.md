@@ -20,7 +20,7 @@ This project aims to estimate Uber prices using Uber's API and store the data in
 ### Steps
 1. Clone the repository
     ```bash
-    git clone https://github.com/your-repo/uber-price-estimation.git
+    git clone https://github.com/your-repo/uber-estimate.git
     ```
 2. Install the required Python packages
     ```bash
