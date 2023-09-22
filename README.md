@@ -32,4 +32,21 @@ This project aims to estimate Uber prices using Uber's API and store the data in
 Run the main script to start fetching and storing Uber price estimates.
 ```bash
 python main.py
+```
 
+## Code Structure
+
+- main.py: The main script that runs the price estimation and database storage.
+- config.py: Contains configuration variables like MySQL credentials and Uber API token.
+
+### Functions
+
+- get_uber_estimate(): Fetches the Uber price estimates
+- convert_to_dataframe(): Converts the JSON response to a Pandas DataFrame.
+- calculate_metrics(): Calculates various metrics like average price, duration, etc.
+- insert_into_db(): Inserts the calculated metrics into the MySQL database.
+
+### References 
+
+- Coordenadas GPS: https://www.coordenadas-gps.com/
+- Uber API Documentation: https://developer.uber.com/docs/riders/ride-requests/tutorials/api/python
